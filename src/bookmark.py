@@ -7,13 +7,14 @@ class Mark:
         self.Level = level
         self.Page = page
 
-    def to_normal_mark(self):
+    def to_normal_mark(self) -> str:
         return f"""BookmarkBegin
 BookmarkTitle: {self.Title}
 BookmarkLevel: {self.Level}
 BookmarkPageNumber: {self.Page}"""
-    def to_simple_mark(self):
-        return f"{'#'*int(self.Level)} ![{self.Title}]({self.Page})"
+
+    def to_simple_mark(self) -> str:
+        return f"{'#'*int(self.Level)} [{self.Title}]({self.Page})"
 
     def __str__(self) -> str:
         return self.to_normal_mark()
@@ -44,7 +45,7 @@ def normal_bookmark_to_marks(text:str) -> list[Mark]:
     return marks
 
 def simple_bookmark_to_marks(text:str) -> list[Mark]:
-    pattern = r'^([#]+) \!\[(.*)\]\((\d+)\)$'
+    pattern = r'^([#]+) \[(.*)\]\((\d+)\)$'
     marks:list[Mark] = []
     matchs = re.finditer(pattern, text, re.MULTILINE)
     for match in matchs:
@@ -67,16 +68,13 @@ def extract_pdf_normal_bookmarks(info_text:str) -> str:
 
 def replace_pdf_normal_bookmarks(pdf_file:str, marks:list[Mark]):
     # 提取出pdf的信息文件
-    print("extract pdf info file")
     os.system(f"pdftk {pdf_file} dump_data_utf8 output {pdf_file}.info")
     info_text = open(f"{pdf_file}.info", 'r').read()
 
     # 删除旧信息文件
-    print("delete old info file")
     os.system(f"rm {pdf_file}.info")
 
     # 替换书签信息
-    print("replace info file")
     cleaned_text = remove_pdf_info_bookmark(info_text)
     cleaned_text += marks_to_normal_bookmark(marks=marks)
 
@@ -84,7 +82,6 @@ def replace_pdf_normal_bookmarks(pdf_file:str, marks:list[Mark]):
     open(f"{pdf_file}.info", 'w').write(cleaned_text)
 
     # 根据新信息文件生成新pdf
-    print("create new pdf file")
     new_pdf_path = os.path.join(os.path.dirname(pdf_file),(os.path.basename(pdf_file).split('.')[0]))
     os.system(f"pdftk {pdf_file} update_info_utf8 {pdf_file}.info output {new_pdf_path}_new.pdf")
     os.system(f"rm {pdf_file}.info")
