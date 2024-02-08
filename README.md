@@ -2,6 +2,12 @@
 
 一个基于Python和pdftk命令行工具的脚本，旨在使在Linux操作系统下为PDF文件添加书签更加便捷
 
+**Example**
+
+```shell
+python3 main.py example.pdf example_mark.txt
+```
+
 ## What is pdftk
 
 PDFtk是一个用于操作和处理PDF文件的命令行工具和桌面应用程序。它具有许多功能，允许用户合并、拆分、旋转、加密、解密和重新排列PDF文件的页面，以及添加书签、水印和页面标签等功能。以下是一些PDFTK的主要功能：
